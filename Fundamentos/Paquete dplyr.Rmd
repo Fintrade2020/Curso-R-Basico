@@ -1,0 +1,120 @@
+---
+title: "Paquete DPLYR"
+date: "22 de septiembre de 2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Se omite las tildes para evitar los caracteres de edicion.
+
+##                         Paquete DPLYR
+
+La base de datos que se va a trabajar estan en las paginas siguientes
+https://covid.ourworldindata.org/data/ecdc/full_data.csv 
+y 
+https://covid.ourworldindata.org/data/ecdc/locations.csv
+
+Se evidencia los tres primeros datos de COVID
+
+```{r, base}
+full<- read.csv("https://covid.ourworldindata.org/data/ecdc/full_data.csv")
+pobl<- read.csv("https://covid.ourworldindata.org/data/ecdc/locations.csv")
+head(full,3)
+```
+
+Se halla las estadisticas basicas de COVID.
+
+```{r}
+summary(full)  
+library(dplyr)
+```
+
+
+A partir de COVID se construye una base bajo el nombre ejercicio que solo contenga las variables:location, date, continent, new cases, new deaths, total cases y total deaths.
+
+```{r,imp}
+COVID= merge(full, pobl,by="location")
+ejercicio = COVID %>%
+  select(location,date,continent,new_cases, new_deaths, total_cases,total_deaths) 
+```
+
+Se evidencia las primeras tres observaciones.
+
+```{r}
+head(ejercicio,3) #Cuarto punto
+```
+
+Se construye un df con los paises de Europa bajo el nombre Europa.
+
+```{r, df}
+#Europa 
+Europa = (COVID) %>%
+  filter(continent %in% c("Europe")) %>%
+  select(location,date,total_cases,total_deaths,new_deaths,population)
+```
+
+Se construye un df con los paises de Sur America bajo el nombre Sur_America.
+
+```{r}
+#Sur America 
+Sur_America = COVID %>%
+  filter(continent %in% c("South America")) %>%
+  select(location, date, total_cases, total_deaths, new_deaths, population)
+
+```
+
+Se construye un df con los datos de la ultima fecha.
+
+```{r}
+#Ultima fecha 
+fecha = (COVID)%>%
+  filter(date == ("2020-09-17")) %>%
+  select(location, date, total_cases, total_deaths, new_deaths, population)
+```
+
+Se construye un df con la media y la desviacion estandar de la variable new_deaths para cada dia
+
+```{r, sdplot}
+sd_media_new_deaths <- COVID %>%
+  group_by(date)%>%
+  summarize(media_cada_dia = mean(new_deaths, na.rm = T),
+            sd_cada_dia = sd(new_deaths, na.rm = T)) 
+```
+
+Se construye una grafica con plot de la tabla anterior.
+
+```{r}
+plot(sd_media_new_deaths)
+plot(sd_media_new_deaths$media_cada_dia, x = as.Date(sd_media_new_deaths$date), ylab = "Media", type = "l") 
+```
+
+Se halla el porcentaje de casos nuevos para el dia 30 de agosto de 2020.
+
+```{r, porcentajedias}
+porcentajeagosto = COVID%>%
+  filter(date == "2020-08-30")%>%
+  mutate(nuevoscasos = new_cases/population*100)%>%
+  select(location, nuevoscasos)
+View(porcentajeagosto)
+
+```
+
+Se halla el porcentaje de nuevas muertes por continente el dia 8 de septiembre de 2020.
+
+```{r}
+porcentajenuevasmuertesxcontinente <- COVID%>%
+  filter(date == "2020-09-08", continent %in% c("North America", "South America", "Europe", "Asia", "Africa", "Oceania"))%>%
+  mutate(porcentajenewdeaths =new_deaths/population*100)%>%
+  group_by(date, continent)%>%
+  summarize(meanporcentualnewdeaths=mean(porcentajenewdeaths))%>%
+  select(date, continent, meanporcentualnewdeaths)
+
+
+View(porcentajenuevasmuertesxcontinente)
+```
+

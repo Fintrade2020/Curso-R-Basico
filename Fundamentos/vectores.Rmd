@@ -1,0 +1,106 @@
+---
+title: "PrimerosPasosRstudio"
+author: "Jenny Carolina Llanos M 63162007"
+date: "2 de octubre de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Operaciones en R
+
+1. Construya y guarde un vector con los numeros del 1 al 10
+
+```{r, punto1}
+x=1:10
+```
+
+2. Construya y guarde un vector con 10 nombres
+
+```{r, punto2}
+nombres= c("Camila", "Eduardo", "Penelope", "Luz", "Carmen", "Isabel", "Jairo", "Jose", "Daniela", "Carolina")
+```
+
+3. Construya y guarde un vector con los numeros del 11 al 20
+
+```{r, punto3}
+x1 = 11:20
+```
+
+4. Construya y guarde una Matriz con con el punto 1 y 2.
+
+```{r, punto4}
+m1=cbind(x,nombres)
+m1
+```
+
+5. Construya un DataFrame con los puntos 1 al 3.
+
+```{r, punto5}
+df1= data.frame(nombres, x, x1)
+```
+
+6. Imprima en consola la dimension de la matriz del punto 4.
+
+```{r, punto6}
+dim(m1)
+```
+
+7. Imprima en consola la longitud de la matriz del punto 4.
+
+```{r, punto7}
+length(m1)
+```
+
+8. Consulte los siguientes comandos:
+
+. ones
+. zeros
+. seq
+. diag
+. rep
+
+```{r, punto8}
+library(optimbase)
+?ones
+?zeros
+?seq
+?diag
+?rep
+```
+
+9. Construya una matriz de dimension 5x5 con todas las entradas el valor 1.
+
+```{r, punto9}
+
+unos=ones(5)
+unos
+```
+
+10.Construya un vector de longitud 5 con todas las entradas el valor 0.
+
+```{r, punto10}
+ceros=zeros(1,5)
+ceros
+```
+
+11. Construya y guarde una secuencia de numeros del 1 al 5.
+
+```{r, punto11}
+t=seq(1,5)
+```
+
+12. Convierta la secuencia del punto 11. en un vector, multiplique la matriz del punto 9 y el vector, imprima en consola el resultado.
+
+```{r, punto12}
+t=as.vector(t)
+t%*%unos
+```
+
+13. Halle la matriz identidad de la matriz identidad e imprima en consola el resultado.
+
+```{r, punto13}
+solve(diag(4))
+```
