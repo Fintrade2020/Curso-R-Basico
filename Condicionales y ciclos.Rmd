@@ -1,0 +1,89 @@
+---
+title: "CONDICIONALES Y CICLOS"
+date: "1/10/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+```
+
+Se omite las tildes para evitar los caracteres de edicion.
+
+
+## Condicionales y ciclos
+
+Se contruye una condicional que calcule la raiz cuadrada de un numero y si es negativo retorne es negativo.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+x= seq(-10,10, by=0.5)
+w=sample(x,1)
+
+if(w>=0){
+print("Positivo")
+z=sqrt(w)
+cat("El resultado es:",z)
+}else{
+"Negativo, No aplica"
+}
+```
+
+Se crea una condicional que evidencia *Verdadero* si los elementos de un vector de longitud 3 son estrictamente crecientes.
+
+```{r, warning=FALSE, message=FALSE}
+w1=c(3.8, 4.2, 4.5)
+if((w1[1]<w1[2]) & (w1[2]<w1[3]))
+  {"Verdadero"} else{"Falso"}
+```
+
+Se realiza su previa comprobacion
+
+```{r, warning=FALSE, message=FALSE}
+w1=c(3.8, 3.2, 4.5)
+if((w1[1]<w1[2]) & (w1[2]<w1[3]))
+{"Verdadero"} else{"Falso"}
+
+```
+
+La base de datos que se va a trabajar estan en las paginas siguientes
+
+https://covid.ourworldindata.org/data/ecdc/full_data.csv 
+y 
+https://covid.ourworldindata.org/data/ecdc/locations.csv
+
+Se construye un ciclo que cambie los NA de la variable *new_deaths* por el promedio ponderado de los ultimos 3 dias, hagalo para una base de Colombia a partir de COVID. Utilice la siguiente ponderacion: hace tres dias 20 %, hace dos dias 35% y ayer 45%.
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+full <- read.csv("https://covid.ourworldindata.org/data/ecdc/full_data.csv")
+pobl = read.csv("https://covid.ourworldindata.org/data/ecdc/locations.csv")
+COVID=merge(full,pobl, by="location")
+
+col= COVID %>%
+  filter(location =="Colombia")%>%
+  select(location, new_cases, new_deaths, total_cases, total_deaths)
+```
+
+```{r, warning=FALSE, message=FALSE}
+
+for (i in 1:length(col$new_deaths)){
+  if(is.na(col$new_deaths[i])){col$new_deaths[i]+
+    (col$new_deaths[i-3]*0.2+col$new_deaths[i-2]*0.35+
+    col$new_deaths[i-1]*0.45)}
+}
+View(col)
+```
+
+
+Se crea un script que retorne la cantidad de valores que son mayores que la media de un vector.
+
+```{r, warning=FALSE, message=FALSE}
+
+v1 = 1:50000
+v2=mean(v1)
+b=rep(0,length(v1))
+b=(v1>v2)
+c=sum(b)
+c
+
+```
