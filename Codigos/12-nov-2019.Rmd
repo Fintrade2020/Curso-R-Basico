@@ -1,0 +1,284 @@
+---
+title: "Gráficos Dinámicos"
+author: "Andrés Martínez"
+date: "12 11 2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introducción 
+
+
+* Gráficos con GGplot
+* Gráficos con Plotly
+* Animaciones
+
+
+
+## Gráficos con GGplot
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+# Preparación de la Base
+library(RCurl)# La dirección web
+library(readr)# La base de datos en cvs o txt
+library(ggplot2)
+library(viridis)
+text=getURL("https://raw.githubusercontent.com/Andres1984/Data-Analysis-with-R/master/Bases/2016.csv")
+H2016 <- read_csv(file=text)
+colnames(H2016)[7] <- "GDP"
+colnames(H2016)[9] <- "Health"
+colnames(H2016)[11] <- "TrustG"
+colnames(H2016)[4]<-"HScore"
+
+
+```
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+qplot( GDP,Health, data = H2016, colour= Region)
+
+```
+
+
+
+
+## Regresión Lineal
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+
+ggplot(H2016, 
+  aes(x = Freedom, 
+      y = HScore)) +
+  geom_point(aes(colour = Region),
+             size = 2) +
+  geom_smooth(method="lm") +
+  labs(x = "Openness Score",
+       y = "Happiness Score",
+       title = "El libre accceso a datos",
+       subtitle = "Libertad acceso datos y felicidad por país") +
+  scale_color_viridis(discrete = T) +
+  theme_minimal() +
+  theme(text = element_text(size=10))
+
+
+```
+
+## Box Plot
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+library(ggpubr)
+sp <- ggscatter(H2016, x = "GDP", y = "HScore",
+                color = "Region", palette = "jco",
+                size = 3, alpha = 0.6)
+
+xbp <- ggboxplot(H2016$GDP, width = 0.3, fill = "lightgray") +
+  rotate() +
+  theme_transparent()
+# Box plot of the y variable
+ybp <- ggboxplot(H2016$HScore, width = 0.3, fill = "lightgray") +
+  theme_transparent()
+# Create the external graphical objects
+# called a "grop" in Grid terminology
+xbp_grob <- ggplotGrob(xbp)
+ybp_grob <- ggplotGrob(ybp)
+# Place box plots inside the scatter plot
+xmin <- min(H2016$GDP); xmax <- max(H2016$GDP) 
+ymin <- min(H2016$HScore); ymax <- max(H2016$HScore)
+yoffset <- (1/15)*ymax; xoffset <- (1/15)*xmax
+# Insert xbp_grob inside the scatter plot
+sp + annotation_custom(grob = xbp_grob, xmin = xmin, xmax = xmax, 
+                       ymin = ymin-yoffset, ymax = ymin+yoffset) +
+  # Insert ybp_grob inside the scatter plot
+  annotation_custom(grob = ybp_grob,
+                    xmin = xmin-xoffset, xmax = xmin+xoffset, 
+                    ymin = ymin, ymax = ymax)
+```
+
+## Box Plot
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+p=ggplot(H2016, aes(x=Region, y= HScore, fill= Region)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + labs(title = "Happiness Score Boxplot",
+
+       x = "Region",
+
+       y = "Happiness Score")
+p+scale_fill_brewer(palette="Oranges") 
+```
+
+## Gráficos con Plotly
+
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+library(plotly)
+p1 <- plot_ly(y = H2016$GDP, type = "box",name="GDP") 
+p2<-  plot_ly(y = H2016$HScore,type="box",name="HScore")
+p3<-  plot_ly(y = H2016$Generosity,type="box",name="Generosidad")
+p4<-  plot_ly(y = H2016$TrustG,type="box",name="Trust")
+
+p<-subplot(p1,p2,p3,p4)
+
+
+
+p 
+
+```
+
+
+
+## Gráficos con leyendas
+
+```{r , echo = FALSE,message=FALSE,warning=FALSE}
+library(plotly)
+c <- H2016 %>%  ggplot(aes(Health, HScore, col=Region, label=Country))+
+  geom_point(size=4, alpha=0.5)+
+  scale_color_brewer(palette = 'Reds')
+ggplotly(c)
+
+
+```
+
+## Mapas 
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+library(dplyr)
+library(countrycode)  # Gets country code 
+library(wesanderson) # Paleta
+library(VIM)
+df.pop <- read.csv("https://raw.githubusercontent.com/Andres1984/Data-Analysis-with-R/master/Bases/API_EN.POP.DNST_DS2_en_csv_v2.csv", header = FALSE)
+df.pop <- df.pop[4:267,]
+df.pop <- select(df.pop, V1, V60)
+names(df.pop) <- c("country", "pop.density")
+df.pop$country <- recode(df.pop$country,
+                         "Congo, Rep." = "Republic of Congo",
+                         "Egypt, Arab Rep." = "Egypt",
+                         "Iran, Islamic Rep." = "Iran",
+                         "Korea, Rep." = "South Korea",
+                         "Cote d'Ivoire" = "Ivory Coast",
+                         "United States" = "USA",
+                         "Yemen, Rep." = "Yemen",
+                         "Congo, Dem. Rep." = "Democratic Republic of the Congo",
+                         "Trinidad and Tobago" = "Trinidad",
+                         "Slovak Republic" = "Slovakia",
+                         "Macedonia, FYR" = "Macedonia",
+                         "Lao PDR" = "Laos",
+                         "Kyrgyz Republic" = "Kyrgyzstan",
+                         "United Kingdom" = "UK",
+                         "Russian Federation" = "Russia",
+                         "Venezuela, RB" = "Venezuela",
+                         "Syrian Arab Republic" = "Syria")
+
+
+```
+
+
+
+
+```{r, echo=FALSE}
+
+H2016$Country <- recode(H2016$Country,
+                     "Congo (Brazzaville)"="Republic of Congo",
+                     "Congo (Kinshasa)"="Democratic Republic of the Congo",
+                     "Hong Kong"="China",
+                     "Hong Kong S.A.R., China"="China",
+                     "North Cyprus"="Cyprus",
+                     "Palestinian Territories"="Palestine",
+                     "Somaliland region"="Somalia",
+                     "Trinidad and Tobago"="Trinidad",
+                     "United Kingdom"="UK",
+                     "United States"="USA",
+                     "Somaliland Region"="Somalia",
+                     "Taiwan Province of China"="Taiwan")
+colnames(df.pop)=c("Country","DenPop")
+H2016=merge(df.pop, H2016, by="Country")
+```
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+map.world <- map_data("world")
+map.world.6 <- left_join(map.world, H2016, by = c('region' = 'Country'))
+map.world.change <- left_join(map.world, H2016, by = c('region' = 'Country'))
+
+
+
+ggplot6 <- ggplot(data = map.world.6, aes(x = long, y = lat, group = group, fill = HScore, text =  paste("Country:", region, "<br>", "Happiness:",HScore, "<br>", "Economy:", GDP, "<br>", "Family:", Family, "<br>", "Health:", Health, "<br>", "Freedom:", Freedom, "<br>", "Trust:", TrustG, "<br>", "Generosity:", Generosity))) +
+  geom_polygon() +
+  scale_fill_gradient(low = "ivory", high = "royalblue") +
+  theme(panel.background =  element_rect(fill = "white", colour = "grey50"),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Felicidad Mundial 2016") +
+  guides(fill = guide_legend(title=NULL))
+ggplotly(ggplot6, tooltip = c("text"))
+
+
+
+```
+
+
+## Regresión con valores específicos
+
+```{r, echo=FALSE,message=FALSE, warning=FALSE}
+
+
+
+ggplotecon <- ggplot(data = H2016, mapping = aes(x = GDP, y = HScore, color = Region, text =  paste("Country:", Country, "<br>", "Economy:", GDP, "<br>", "Happiness:",HScore, "<br>","Den Pop Km2",round(DenPop)),size=DenPop)) +
+  geom_point() +
+  annotate("text", x = 1.5, y = 4, label = paste("Rsquared:", round(cor(H2016[,c(5,8)])[1,2], 2), sep = " "), parse = TRUE) +
+  labs(title = "¿Depende la Felicidad del PIB?",
+     
+       x = "PIB",
+       y = "Felicidad") +
+  scale_color_brewer(palette = "Spectral") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.title = element_blank())
+
+ggplotly(ggplotecon, tooltip = c("text"))
+```
+
+
+## Animacion
+
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE}
+library(gapminder)
+library(gganimate)
+theme_set(theme_bw())
+
+p <- gapminder %>%
+  plot_ly(
+    x = ~gdpPercap, 
+    y = ~lifeExp, 
+    size = ~pop, 
+    color = ~continent, 
+    frame = ~year, 
+    text = ~country, 
+    hoverinfo = "text",
+    type = 'scatter',
+    mode = 'markers'
+  ) %>%
+  layout(
+    xaxis = list(
+      type = "log"
+    )
+  )
+
+p
+```
+
+
+## Conclusiones
+
+
+
+
+Muchas Gracias por su Atención
