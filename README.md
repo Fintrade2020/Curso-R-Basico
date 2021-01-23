@@ -36,8 +36,8 @@ El curso de análisis de datos en R se enfocará en generar competencias prácti
 | --- | --- |
 | 1| Introducción y funciones principales|
 | 2 | Comando básicos y trabajo con datos cargados |
-| 3| Estadísticas descriptivas y regresiones lineales |
-| 4 | Gráficos estadísticos básicos|
+| 3| Gráficos estadísticos básicos |
+| 4 | Gráficos dinámicos|
 
 
 
