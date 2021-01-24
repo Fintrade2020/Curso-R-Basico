@@ -1,6 +1,7 @@
 ---
 title: "Paquete DPLYR"
 date: "22 de septiembre de 2020"
+author: "Jenny Carolina Llanos M"
 output:
   pdf_document: default
   html_document: default
