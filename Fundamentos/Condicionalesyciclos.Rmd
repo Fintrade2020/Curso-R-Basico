@@ -1,5 +1,6 @@
 ---
 title: "CONDICIONALES Y CICLOS"
+author: "Jenny Carolina Llanos M"
 date: "1/10/2020"
 output: pdf_document
 ---
