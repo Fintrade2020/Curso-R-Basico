@@ -1,5 +1,6 @@
 ---
 title: "PrimerosPasosEnRstudio"
+author: "Jenny Carolina Llanos M"
 date: "30 de septiembre de 2020"
 output: html_document
 ---
