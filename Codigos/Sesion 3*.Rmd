@@ -1,6 +1,6 @@
 ---
 title: "Graficas basicas"
-author: "Valentina Munoz"
+author: "Valentina Munoz - Equipo laboratorio Fintrade"
 date: "27 de enero de 2021"
 output: html_document
 ---
